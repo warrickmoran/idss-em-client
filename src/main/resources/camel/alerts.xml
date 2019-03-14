@@ -1,0 +1,25 @@
+<routes xmlns="http://camel.apache.org/schema/spring" xmlns:cap="http://www.w3.org/2005/Atom">
+
+	<route id="ingest-cap">
+		<from uri="atom://https://alerts.weather.gov/cap/us.php?x=0?splitEntries=true" />
+		<to uri="seda:ingest" />
+	</route>
+	
+	<route id="retrieve-cap-url">
+		<from uri="seda:ingest" />
+		<convertBodyTo type="java.lang.String"/>
+		<setBody>
+			<!-- http://camel.465427.n5.nabble.com/fail-filter-XPATH-camel-td476424.html -->
+			<xpath>/cap:entry/cap:id/text()</xpath>
+		</setBody>
+		<log message="${body}" />
+		<to uri="seda:cap-url" />
+	</route>
+	
+	<route id="retrieve-cap-txt">
+		<from uri="seda:cap-url" />
+		<bean ref="utilities" method="removeHttpProtocol" />
+		<toD uri="http4:${body}" />
+		<log message="${body}" />
+	</route>
+</routes>
