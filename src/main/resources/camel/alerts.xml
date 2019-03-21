@@ -29,6 +29,6 @@
 		<unmarshal>
 			<jaxb prettyPrint="true" contextPath="cap.v11"/>
 		</unmarshal>
-		<log message="${body}" />
+		<log message="${body}" loggingLevel="INFO"/>
 	</route>
 </routes>
