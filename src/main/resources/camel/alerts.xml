@@ -12,7 +12,7 @@
 			<!-- http://camel.465427.n5.nabble.com/fail-filter-XPATH-camel-td476424.html -->
 			<xpath>/cap:entry/cap:id/text()</xpath>
 		</setBody>
-		<log message="${body}" />
+		<log message="${body}" loggingLevel="DEBUG" />
 		<to uri="seda:cap-url" />
 	</route>
 	
@@ -20,6 +20,15 @@
 		<from uri="seda:cap-url" />
 		<bean ref="utilities" method="removeHttpProtocol" />
 		<toD uri="http4:${body}" />
+		<log message="${body}" loggingLevel="DEBUG" />
+		<to uri="seda:cap-txt" />
+	</route>
+	
+	<route id="unmarshal-cap">
+		<from uri="seda:cap-txt" />
+		<unmarshal>
+			<jaxb prettyPrint="true" contextPath="cap.v11"/>
+		</unmarshal>
 		<log message="${body}" />
 	</route>
 </routes>
